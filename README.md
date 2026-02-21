@@ -1,4 +1,5 @@
 # DEVO-point-cloud-docker
+![Screenshot](assets/image.png)
 
 This repository provides a Dockerized environment for working with the DEVO-point-cloud and rpg_emvs projects, primarily focusing on ROS 1 Noetic with GPU acceleration. It sets up a complete desktop environment (XFCE) accessible via VNC and a web browser (noVNC), along with all necessary dependencies and tools.
 
@@ -21,16 +22,23 @@ This repository provides a Dockerized environment for working with the DEVO-poin
 1.  **Clone the repository:**
     ```bash
     git clone https://github.com/Alireza-Safdari-Khosroshahi/DEVO-point-cloud-docker.git
-    cd DEVO-point-cloud-docker/docker
+    cd DEVO-point-cloud-docker
     ```
-2.  **Build the Docker image:**
-    From the root of this repository, run:
+
+2.  **Navigate to the `docker` directory:**
+    ```bash
+    cd docker
+    ```
+
+3.  **Build the Docker image:**
+    From the `docker` directory, run:
     ```bash
     docker-compose build
     ```
     This will build the `devo_pc_pipline_image` image. This might take some time as it installs all dependencies and sets up the environment.
 
-3.  **Start the container:**
+4.  **Start the container:**
+    From the `docker` directory, run:
     ```bash
     docker-compose up -d
     ```
