@@ -2,21 +2,21 @@
 set -euo pipefail
 
 # ---- Create folders/files (safe if volume-mounted) ----
-export WORKSPACE="${WORKSPACE:-$HOME/workspace}"
+export WORKSPACE="${WORKSPACE:-/home/ros/workspace}"
 export ROS1_WS="${ROS1_WS:-$WORKSPACE/ros1_ws}"
 export ROS2_WS="${ROS2_WS:-$WORKSPACE/ros2_ws}"
 
-mkdir -p "$ROS1_WS/src" "$ROS2_WS/src" "$WORKSPACE/shared" "$HOME/.ros"
+mkdir -p "$ROS1_WS/src" "$ROS2_WS/src" "$WORKSPACE/shared" "/home/ros/.ros"
 
 # Ensure shell init files exist (some base images don't create them for volume users)
-touch "$HOME/.bashrc" "$HOME/.zshrc"
+touch "/home/ros/.bashrc" "/home/ros/.zshrc"
 
 # Ensure system ROS selector is sourced for interactive shells
-if ! grep -q "ros_select.sh" "$HOME/.bashrc"; then
-  echo '[ -f /etc/profile.d/ros_select.sh ] && . /etc/profile.d/ros_select.sh' >> "$HOME/.bashrc"
+if ! grep -q "ros_select.sh" "/home/ros/.bashrc"; then
+  echo '[ -f /etc/profile.d/ros_select.sh ] && . /etc/profile.d/ros_select.sh' >> "/home/ros/.bashrc"
 fi
-if ! grep -q "ros_select.sh" "$HOME/.zshrc"; then
-  echo '[ -f /etc/profile.d/ros_select.sh ] && . /etc/profile.d/ros_select.sh' >> "$HOME/.zshrc"
+if ! grep -q "ros_select.sh" "/home/ros/.zshrc"; then
+  echo '[ -f /etc/profile.d/ros_select.sh ] && . /etc/profile.d/ros_select.sh' >> "/home/ros/.zshrc"
 fi
 
 # ---- Select default ROS version for this container process ----
@@ -63,7 +63,9 @@ fi
 # 2) Build rpg_emvs (ROS1 / Noetic) if not built yet
 if [ ! -f "$EMVS_WS/devel/setup.bash" ]; then
   echo "[SETUP] Building rpg_emvs (catkin)..."
+  set +u
   source /opt/ros/noetic/setup.bash
+  set -u
 
   mkdir -p "$EMVS_WS/src"
   cd "$EMVS_WS"
@@ -104,7 +106,7 @@ pip install -U pip
 pip install .
 
 conda deactivate
-cd "$HOME"
+cd "/home/ros"
 echo "[SETUP] Done."
 
 # ---- VNC/noVNC ----

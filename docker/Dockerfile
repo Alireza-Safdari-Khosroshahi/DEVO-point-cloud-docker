@@ -18,11 +18,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     xfce4 xfce4-terminal dbus-x11 x11-xserver-utils \
     tigervnc-standalone-server tigervnc-common \
     novnc websockify \
-    # GUI/OpenGL basics (optional but helpful)
-  libgl1-mesa-glx libgl1-mesa-dri libglu1-mesa \
-    # Optional: diagnostics
+    libgl1-mesa-glx libgl1-mesa-dri libglu1-mesa \
     pciutils \
   && rm -rf /var/lib/apt/lists/*
+
+# ---- Force GitHub SSH -> HTTPS (for vcs-import) ----
+RUN git config --system url."https://github.com/".insteadOf "git@github.com:" \
+ && git config --system url."https://github.com/".insteadOf "ssh://git@github.com/"
+ENV GIT_TERMINAL_PROMPT=0
 
 # Create user
 ARG USER=ros
@@ -58,8 +61,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && rm -rf /var/lib/apt/lists/*
 
 # rosdep init (system-wide)
-RUN rosdep init || true
-RUN rosdep update
+RUN mkdir -p /etc/ros/rosdep/sources.list.d \
+ && rosdep init \
+ && rosdep update
 
 # ===== ROS environment selector (system-wide) =====
 # Provides:
@@ -99,6 +103,7 @@ RUN bash -lc "touch ~/.bashrc ~/.zshrc && \
   grep -q 'ros_select.sh' ~/.zshrc  || echo '[ -f /etc/profile.d/ros_select.sh ] && . /etc/profile.d/ros_select.sh'  >> ~/.zshrc"
 
 # ---- Miniconda (for DEVO) ----
+USER root
 ENV CONDA_DIR=/opt/conda
 ENV PATH=$CONDA_DIR/bin:$PATH
 
@@ -109,9 +114,20 @@ RUN curl -fsSL -o /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Minicond
  && $CONDA_DIR/bin/conda clean -afy \
  && chown -R ros:ros $CONDA_DIR
 
-# Make conda available in interactive shells
+# Make conda available in interactive shells (bash + zsh, for new users)
 RUN printf '\n# Conda\n[ -f /opt/conda/etc/profile.d/conda.sh ] && . /opt/conda/etc/profile.d/conda.sh\n' \
-  >> /etc/skel/.bashrc
+  >> /etc/skel/.bashrc \
+ && printf '\n# Conda\n[ -f /opt/conda/etc/profile.d/conda.sh ] && . /opt/conda/etc/profile.d/conda.sh\n' \
+  >> /etc/skel/.zshrc
+
+# Make conda available for the existing ros user (bash + zsh)
+USER ros
+RUN printf '\n# Conda\n[ -f /opt/conda/etc/profile.d/conda.sh ] && . /opt/conda/etc/profile.d/conda.sh\n' \
+  >> /home/ros/.bashrc \
+ && printf '\n# Conda\n[ -f /opt/conda/etc/profile.d/conda.sh ] && . /opt/conda/etc/profile.d/conda.sh\n' \
+  >> /home/ros/.zshrc
+
+USER ros
 
 RUN RUNZSH=no CHSH=no KEEP_ZSHRC=yes \
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \

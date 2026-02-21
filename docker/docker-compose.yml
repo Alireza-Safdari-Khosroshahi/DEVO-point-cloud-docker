@@ -4,6 +4,7 @@ services:
     image: devo_pc_pipline_image
     container_name: DEVO_PC_pipline
     restart: unless-stopped
+    user: "${UID}:${GID}"
 
     gpus: all
 
@@ -11,7 +12,7 @@ services:
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility,graphics
       - ROS_DEFAULT_VERSION=1
-
+      - HOME=/home/ros
       - VNC_PASS=ros
       - VNC_GEOMETRY=1440x900
       - VNC_DEPTH=24

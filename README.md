@@ -33,18 +33,18 @@ This repository provides a Dockerized environment for working with the DEVO-poin
 3.  **Build the Docker image:**
     From the `docker` directory, run:
     ```bash
-    docker-compose build
+    UID=$(id -u) GID=$(id -g) docker compose build
     ```
-    This will build the `devo_pc_pipline_image` image. This might take some time as it installs all dependencies and sets up the environment.
+    This command builds the `devo_pc_pipline_image` image, passing your host user's UID and GID to ensure proper file permissions for mounted volumes. This might take some time as it installs all dependencies and sets up the environment.
 
 4.  **Start the container:**
     From the `docker` directory, run:
     ```bash
-    docker-compose up -d
+    docker compose up -d
     ```
     This command starts the `ros-desktop` service in detached mode (`-d`). The `entrypoint.sh` script will automatically run, performing initial setup like cloning repositories, building `rpg_emvs`, and setting up the `DEVO-point-cloud` conda environment.
 
-    *The first time you run `docker-compose up -d`, it will perform significant setup inside the container (cloning repos, building, installing conda env). This can take several minutes. Subsequent starts will be much faster as these steps are skipped if the directories/environments already exist.*
+    *The first time you run `docker compose up -d`, it will perform significant setup inside the container (cloning repos, building, installing conda env). This can take several minutes. Subsequent starts will be much faster as these steps are skipped if the directories/environments already exist.*
 
 ## Usage
 
@@ -90,7 +90,7 @@ Once inside, you will find:
 To stop the running container:
 
 ```bash
-docker-compose down
+docker compose down
 ```
 This will stop and remove the container, but it will preserve the `workspace` directory on your host machine.
 
