@@ -1,10 +1,13 @@
 services:
   ros-desktop:
-    build: .
+    build:
+      context: .
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
     image: devo_pc_pipline_image
     container_name: DEVO_PC_pipline
     restart: unless-stopped
-    user: "${UID}:${GID}"
 
     gpus: all
 

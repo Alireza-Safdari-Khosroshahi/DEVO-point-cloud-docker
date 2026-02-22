@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl gnupg2 lsb-release ca-certificates sudo \
     python3 python3-pip \
     git vim nano fish zsh \
+    openssh-client \
     xfce4 xfce4-terminal dbus-x11 x11-xserver-utils \
     tigervnc-standalone-server tigervnc-common \
     novnc websockify \
@@ -27,12 +28,19 @@ RUN git config --system url."https://github.com/".insteadOf "git@github.com:" \
  && git config --system url."https://github.com/".insteadOf "ssh://git@github.com/"
 ENV GIT_TERMINAL_PROMPT=0
 
+
 # Create user
 ARG USER=ros
 ARG UID=1000
 ARG GID=1000
 RUN groupadd -g ${GID} ${USER} && useradd -m -u ${UID} -g ${GID} -s /bin/bash ${USER} \
  && echo "${USER} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USER}
+
+
+RUN mkdir -p /home/ros/.ssh && chmod 700 /home/ros/.ssh \
+    && ssh-keyscan -H github.com >> /home/ros/.ssh/known_hosts \
+    && chmod 600 /home/ros/.ssh/known_hosts \
+    && chown -R ros:ros /home/ros/.ssh
 
 # ROS apt keys + sources
 RUN apt-get update && apt-get install -y --no-install-recommends software-properties-common \
@@ -53,10 +61,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-rosdep python3-rosinstall python3-rosinstall-generator python3-wstool build-essential \
     ros-foxy-desktop \
     python3-colcon-common-extensions \
-    # --- add for rpg_emvs ---
+    python3-empy \
     python3-catkin-tools python3-vcstool \
     ros-noetic-pcl-ros \
-    # --- add for DEVO + general ---
+    libgoogle-glog-dev libgflags-dev \
     wget unzip cmake pkg-config \
   && rm -rf /var/lib/apt/lists/*
 
@@ -136,7 +144,9 @@ RUN RUNZSH=no CHSH=no KEEP_ZSHRC=yes \
 
 RUN sed -i 's/^plugins=(git)/plugins=(git docker)/' /home/ros/.zshrc
 USER root
+RUN chown -R ${USER}:${USER} /home/${USER}
 RUN chsh -s /usr/bin/zsh ros
 SHELL ["/usr/bin/zsh", "-lc"]
-USER ros
+USER ${USER}
+WORKDIR /home/${USER}
 ENTRYPOINT ["/entrypoint.sh"]
