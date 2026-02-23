@@ -17,6 +17,25 @@ This repository provides a Dockerized environment for working with the DEVO-poin
 *   **Docker:** Ensure Docker is installed and running on your system.
 *   **NVIDIA GPU & NVIDIA Container Toolkit:** For GPU acceleration, you must have an NVIDIA GPU and the NVIDIA Container Toolkit installed. Follow the official NVIDIA Docker documentation for installation.
 
+## Start / Stop scripts
+
+This repository includes simple wrapper scripts for common container operations. They live at the repository root and call the underlying Docker Compose commands.
+
+- `./start_container.sh` — builds (if needed) and starts the container in detached mode. Equivalent to running `cd docker && docker compose up -d`.
+- `./stop_container.sh` — stops and removes the container. Equivalent to running `cd docker && docker compose down`.
+- `./cleanup.sh` — performs extra cleanup tasks (remove volumes, temporary files, or workspace resets) — inspect the script before running to confirm behavior.
+
+Usage (from the repository root):
+
+```bash
+
+./start_container.sh
+./stop_container.sh
+./cleanup.sh   # optional, be careful — may remove more than the container
+```
+
+Make sure the scripts are executable; if not, make them executable with `chmod +x start_container.sh stop_container.sh cleanup.sh`.
+
 ## Setup
 
 1.  **Clone the repository:**
@@ -93,25 +112,6 @@ To stop the running container:
 docker compose down
 ```
 This will stop and remove the container, but it will preserve the `workspace` directory on your host machine.
-
-## Start / Stop scripts
-
-This repository includes simple wrapper scripts for common container operations. They live at the repository root and call the underlying Docker Compose commands.
-
-- `./start_container.sh` — builds (if needed) and starts the container in detached mode. Equivalent to running `cd docker && docker compose up -d`.
-- `./stop_container.sh` — stops and removes the container. Equivalent to running `cd docker && docker compose down`.
-- `./cleanup.sh` — performs extra cleanup tasks (remove volumes, temporary files, or workspace resets) — inspect the script before running to confirm behavior.
-
-Usage (from the repository root):
-
-```bash
-
-./start_container.sh
-./stop_container.sh
-./cleanup.sh   # optional, be careful — may remove more than the container
-```
-
-Make sure the scripts are executable; if not, make them executable with `chmod +x start_container.sh stop_container.sh cleanup.sh`.
 
 ## Customization
 
