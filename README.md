@@ -17,24 +17,6 @@ This repository provides a Dockerized environment for working with the DEVO-poin
 *   **Docker:** Ensure Docker is installed and running on your system.
 *   **NVIDIA GPU & NVIDIA Container Toolkit:** For GPU acceleration, you must have an NVIDIA GPU and the NVIDIA Container Toolkit installed. Follow the official NVIDIA Docker documentation for installation.
 
-## Start / Stop scripts
-
-This repository includes simple wrapper scripts for common container operations. They live at the repository root and call the underlying Docker Compose commands.
-
-- `./start_container.sh` — builds (if needed) and starts the container in detached mode. Equivalent to running `cd docker && docker compose up -d`.
-- `./stop_container.sh` — stops and removes the container. Equivalent to running `cd docker && docker compose down`.
-- `./cleanup.sh` — performs extra cleanup tasks (remove volumes, temporary files, or workspace resets) — inspect the script before running to confirm behavior.
-
-Usage (from the repository root):
-
-```bash
-
-./start_container.sh
-./stop_container.sh
-./cleanup.sh   # optional, be careful — may remove more than the container
-```
-
-Make sure the scripts are executable; if not, make them executable with `chmod +x start_container.sh stop_container.sh cleanup.sh`.
 
 ## Setup
 
@@ -44,8 +26,6 @@ Make sure the scripts are executable; if not, make them executable with `chmod +
     cd DEVO-point-cloud-docker
     ```
  
-
-
 2.  **Navigate to the `docker` directory:**
     ```bash
     cd docker
@@ -73,7 +53,7 @@ From the repository root, use the wrapper scripts to start and stop the containe
 
 ```bash
 ./start_container.sh    # build (if needed) and start the container
-# wait for initialization (~minutes on first run)
+# wait for initialization (~20minutes on first run)
 ./stop_container.sh     # stop and remove the container
 ./cleanup.sh            # optional: cleans images/containers/workspace (inspect before running)
 ```
@@ -132,25 +112,6 @@ docker compose down
 ```
 This will stop and remove the container, but it will preserve the `workspace` directory on your host machine.
 
-<<<<<<< HEAD
-## Start / Stop scripts
-
-This repository includes wrapper scripts at the repository root which call the underlying Docker Compose commands in `docker/` so you don't need to `cd` manually. Inspect each script before running—`cleanup.sh` may remove images/containers and workspace contents.
-
-- `start_container.sh` — build (if needed) and start the container (detached).
-- `stop_container.sh` — stop and remove the container.
-- `cleanup.sh` — remove compose resources, image, and optionally workspace contents (accepts `--docker-only`, `--workspace-only`, `-y/--yes`).
-
-Examples:
-
-```bash
-./start_container.sh
-./stop_container.sh
-./cleanup.sh --docker-only -y
-```
-
-=======
->>>>>>> 7918b06c5ec0f16079d4a199d9a0b1610489590e
 ## Customization
 
 *   **VNC Settings:** You can adjust `VNC_PASS`, `VNC_GEOMETRY`, and `VNC_DEPTH` in `docker-compose.yml` to customize your VNC experience.
