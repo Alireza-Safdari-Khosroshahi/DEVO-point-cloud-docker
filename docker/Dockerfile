@@ -119,7 +119,7 @@ RUN curl -fsSL -o /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Minicond
  && bash /tmp/miniconda.sh -b -p $CONDA_DIR \
  && rm -f /tmp/miniconda.sh \
  && $CONDA_DIR/bin/conda config --system --set auto_activate_base false \
- && $CONDA_DIR/bin/conda clean -afy \
+ && $CONDA_DIR/bin/conda clean -afy \ 
  && chown -R ros:ros $CONDA_DIR
 
 # Make conda available in interactive shells (bash + zsh, for new users)

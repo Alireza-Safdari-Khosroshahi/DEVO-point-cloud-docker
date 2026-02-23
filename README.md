@@ -94,6 +94,25 @@ docker compose down
 ```
 This will stop and remove the container, but it will preserve the `workspace` directory on your host machine.
 
+## Start / Stop scripts
+
+This repository includes simple wrapper scripts for common container operations. They live at the repository root and call the underlying Docker Compose commands.
+
+- `./start_container.sh` — builds (if needed) and starts the container in detached mode. Equivalent to running `cd docker && docker compose up -d`.
+- `./stop_container.sh` — stops and removes the container. Equivalent to running `cd docker && docker compose down`.
+- `./cleanup.sh` — performs extra cleanup tasks (remove volumes, temporary files, or workspace resets) — inspect the script before running to confirm behavior.
+
+Usage (from the repository root):
+
+```bash
+
+./start_container.sh
+./stop_container.sh
+./cleanup.sh   # optional, be careful — may remove more than the container
+```
+
+Make sure the scripts are executable; if not, make them executable with `chmod +x start_container.sh stop_container.sh cleanup.sh`.
+
 ## Customization
 
 *   **VNC Settings:** You can adjust `VNC_PASS`, `VNC_GEOMETRY`, and `VNC_DEPTH` in `docker-compose.yml` to customize your VNC experience.

@@ -67,24 +67,37 @@ fi
 # 2) Build rpg_emvs (ROS1 / Noetic)
 if [ ! -f "$EMVS_WS/devel/setup.bash" ]; then
   echo "[SETUP] Building rpg_emvs (catkin)..."
+  
+  # --- CRITICAL: Isolate from Conda ---
+  # Clear PYTHONPATH and deactivate Conda to prevent it from hiding system modules
+  unset PYTHONPATH
   set +u
+  if command -v conda >/dev/null 2>&1; then
+      conda deactivate || true
+  fi
   source /opt/ros/noetic/setup.bash
   set -u
 
-  # Clean the workspace src to prevent recursion
+  # Re-create fresh workspace structure
   rm -rf "$EMVS_WS/src"
   mkdir -p "$EMVS_WS/src"
   cd "$EMVS_WS"
 
-  catkin config --init --mkdirs --extend /opt/ros/noetic --merge-devel --cmake-args -DCMAKE_BUILD_TYPE=Release
+  # Force CMake to use the system Python and find EmPy specifically
+  catkin config --init --mkdirs --extend /opt/ros/noetic --merge-devel \
+    --cmake-args \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DPYTHON_EXECUTABLE=/usr/bin/python3 \
+    -DEMPY_EXECUTABLE=/usr/bin/empy
 
   cd "$EMVS_WS/src"
   ln -sf "$EMVS_DIR" rpg_emvs
   
-  # Rewrite dependencies to use HTTPS explicitly
+  # Ensure HTTPS is used for all sub-dependencies
   sed -i 's#git@github.com:#https://github.com/#g' rpg_emvs/dependencies.yaml
   vcs-import < rpg_emvs/dependencies.yaml
 
+  # Execute the build
   cd "$EMVS_WS"
   catkin build mapper_emvs
 fi
@@ -99,6 +112,9 @@ fi
 cd "$DEVO_DIR"
 conda activate devo
 
+echo "[SETUP] Installing DEVO core dependencies (torch, etc.)..."
+conda install -y pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
+
 if [ ! -d "$DEVO_DIR/thirdparty/eigen-3.4.0" ] && [ ! -d "$DEVO_DIR/thirdparty/eigen-eigen-3.4.0" ]; then
   echo "[SETUP] Downloading Eigen..."
   wget -O /tmp/eigen-3.4.0.zip https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.zip
@@ -107,11 +123,18 @@ if [ ! -d "$DEVO_DIR/thirdparty/eigen-3.4.0" ] && [ ! -d "$DEVO_DIR/thirdparty/e
 fi
 
 pip install -U pip
-pip install .
+pip install --no-build-isolation .
 conda deactivate
 
 cd "/home/ros"
-echo "[SETUP] Done."
+
+echo -e "\e[32m"
+echo "=========================================="
+echo "✓ Setup complete!"
+echo "✓ Build finished and environment ready"
+echo "=========================================="
+echo "Starting VNC server..."
+echo -e "\e[0m"
 
 # ---- VNC/noVNC ----
 VNC_PASS="${VNC_PASS:-ros}"
