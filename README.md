@@ -24,6 +24,8 @@ This repository provides a Dockerized environment for working with the DEVO-poin
     git clone https://github.com/Alireza-Safdari-Khosroshahi/DEVO-point-cloud-docker.git
     cd DEVO-point-cloud-docker
     ```
+ 
+
 
 2.  **Navigate to the `docker` directory:**
     ```bash
@@ -45,6 +47,23 @@ This repository provides a Dockerized environment for working with the DEVO-poin
     This command starts the `ros-desktop` service in detached mode (`-d`). The `entrypoint.sh` script will automatically run, performing initial setup like cloning repositories, building `rpg_emvs`, and setting up the `DEVO-point-cloud` conda environment.
 
     *The first time you run `docker compose up -d`, it will perform significant setup inside the container (cloning repos, building, installing conda env). This can take several minutes. Subsequent starts will be much faster as these steps are skipped if the directories/environments already exist.*
+
+## Quick start (recommended)
+
+From the repository root, use the wrapper scripts to start and stop the container without changing directories:
+
+```bash
+./start_container.sh    # build (if needed) and start the container
+# wait for initialization (~minutes on first run)
+./stop_container.sh     # stop and remove the container
+./cleanup.sh            # optional: cleans images/containers/workspace (inspect before running)
+```
+
+If a script is not executable, make it so:
+
+```bash
+chmod +x start_container.sh stop_container.sh cleanup.sh
+```
 
 ## Usage
 
@@ -96,22 +115,19 @@ This will stop and remove the container, but it will preserve the `workspace` di
 
 ## Start / Stop scripts
 
-This repository includes simple wrapper scripts for common container operations. They live at the repository root and call the underlying Docker Compose commands.
+This repository includes wrapper scripts at the repository root which call the underlying Docker Compose commands in `docker/` so you don't need to `cd` manually. Inspect each script before running—`cleanup.sh` may remove images/containers and workspace contents.
 
-- `./start_container.sh` — builds (if needed) and starts the container in detached mode. Equivalent to running `cd docker && docker compose up -d`.
-- `./stop_container.sh` — stops and removes the container. Equivalent to running `cd docker && docker compose down`.
-- `./cleanup.sh` — performs extra cleanup tasks (remove volumes, temporary files, or workspace resets) — inspect the script before running to confirm behavior.
+- `start_container.sh` — build (if needed) and start the container (detached).
+- `stop_container.sh` — stop and remove the container.
+- `cleanup.sh` — remove compose resources, image, and optionally workspace contents (accepts `--docker-only`, `--workspace-only`, `-y/--yes`).
 
-Usage (from the repository root):
+Examples:
 
 ```bash
-
 ./start_container.sh
 ./stop_container.sh
-./cleanup.sh   # optional, be careful — may remove more than the container
+./cleanup.sh --docker-only -y
 ```
-
-Make sure the scripts are executable; if not, make them executable with `chmod +x start_container.sh stop_container.sh cleanup.sh`.
 
 ## Customization
 

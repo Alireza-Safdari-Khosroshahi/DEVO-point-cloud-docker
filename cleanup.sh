@@ -2,18 +2,9 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-if [[ -f "$SCRIPT_DIR/docker/docker-compose.yml" ]]; then
-  PROJECT_ROOT="$SCRIPT_DIR"
-  COMPOSE_FILE="$PROJECT_ROOT/docker/docker-compose.yml"
-elif [[ -f "$SCRIPT_DIR/../docker/docker-compose.yml" ]]; then
-  PROJECT_ROOT="$(cd -- "$SCRIPT_DIR/.." && pwd)"
-  COMPOSE_FILE="$PROJECT_ROOT/docker/docker-compose.yml"
-else
-  PROJECT_ROOT="$(cd -- "$SCRIPT_DIR/.." && pwd)"
-  COMPOSE_FILE="$PROJECT_ROOT/docker/docker-compose.yml"
-fi
-
-WORKSPACE_DIR="$PROJECT_ROOT/workspace"
+COMPOSE_DIR="$SCRIPT_DIR/docker"
+COMPOSE_FILE="$COMPOSE_DIR/docker-compose.yml"
+WORKSPACE_DIR="$COMPOSE_DIR/workspace"
 IMAGE_NAME="devo_pc_pipline_image"
 CONTAINER_NAME="DEVO_PC_pipline"
 
