@@ -53,7 +53,7 @@ From the repository root, use the wrapper scripts to start and stop the containe
 
 ```bash
 ./start_container.sh    # build (if needed) and start the container
-# wait for initialization (~20minutes on first run)
+# wait for initialization (~20minutes)
 ./stop_container.sh     # stop and remove the container
 ./cleanup.sh            # optional: cleans images/containers/workspace (inspect before running)
 ```
