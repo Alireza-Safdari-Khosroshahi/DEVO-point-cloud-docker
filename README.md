@@ -124,6 +124,9 @@ This will stop and remove the container, but it will preserve the `workspace` di
 .
 ├── LICENSE
 ├── README.md
+├── start_container.sh
+├── stop_container.sh
+├── cleanup.sh
 ├── .git/...
 └── docker/
     ├── docker-compose.yml
