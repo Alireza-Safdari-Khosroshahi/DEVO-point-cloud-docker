@@ -20,7 +20,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     tigervnc-standalone-server tigervnc-common \
     novnc websockify \
     libgl1-mesa-glx libgl1-mesa-dri libglu1-mesa \
-    pciutils \
+    pciutils pcl-tools \
   && rm -rf /var/lib/apt/lists/*
 
 # ---- Force GitHub SSH -> HTTPS (for vcs-import) ----

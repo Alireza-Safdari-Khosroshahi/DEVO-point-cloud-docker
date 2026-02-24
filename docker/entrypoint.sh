@@ -67,40 +67,53 @@ fi
 # 2) Build rpg_emvs (ROS1 / Noetic)
 if [ ! -f "$EMVS_WS/devel/setup.bash" ]; then
   echo "[SETUP] Building rpg_emvs (catkin)..."
-  
-  # --- CRITICAL: Isolate from Conda ---
-  # Clear PYTHONPATH and deactivate Conda to prevent it from hiding system modules
+
+  # --- CRITICAL: isolate from Conda ---
   unset PYTHONPATH
   set +u
   if command -v conda >/dev/null 2>&1; then
-      conda deactivate || true
+    conda deactivate || true
   fi
   source /opt/ros/noetic/setup.bash
   set -u
 
-  # Re-create fresh workspace structure
-  rm -rf "$EMVS_WS/src"
+  # Create workspace structure (keep build artifacts on volume)
   mkdir -p "$EMVS_WS/src"
   cd "$EMVS_WS"
 
-  # Force CMake to use the system Python and find EmPy specifically
+  # Find correct empy executable
+  EMPY_BIN="$(command -v empy || command -v empy3)"
+
+  # Configure catkin workspace
   catkin config --init --mkdirs --extend /opt/ros/noetic --merge-devel \
     --cmake-args \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DPYTHON_EXECUTABLE=/usr/bin/python3 \
-    -DEMPY_EXECUTABLE=/usr/bin/empy
+      -DCMAKE_BUILD_TYPE=Release \
+      -DPYTHON_EXECUTABLE=/usr/bin/python3 \
+      -DEMPY_EXECUTABLE="${EMPY_BIN}"
 
+  # Link EMVS repo into src
   cd "$EMVS_WS/src"
   ln -sf "$EMVS_DIR" rpg_emvs
-  
-  # Ensure HTTPS is used for all sub-dependencies
+
+  # Ensure HTTPS is used for dependencies
   sed -i 's#git@github.com:#https://github.com/#g' rpg_emvs/dependencies.yaml
   vcs-import < rpg_emvs/dependencies.yaml
 
-  # Execute the build
+  # Skip packages that require libcaer and missing python build tool
   cd "$EMVS_WS"
-  catkin build mapper_emvs
+  catkin config --skiplist davis_ros_driver dvs_ros_driver dvxplorer_ros_driver minkindr_python
+
+  # Build
+  catkin build
 fi
+
+# Always source EMVS overlay (even if it already existed)
+source /opt/ros/noetic/setup.bash
+source "$EMVS_WS/devel/setup.bash"
+
+# Optional: make it persistent for interactive shells
+grep -q "$EMVS_WS/devel/setup.bash" /home/ros/.bashrc || echo "source $EMVS_WS/devel/setup.bash" >> /home/ros/.bashrc
+grep -q "$EMVS_WS/devel/setup.bash" /home/ros/.zshrc  || echo "source $EMVS_WS/devel/setup.bash"  >> /home/ros/.zshrc
 
 # 3) Install DEVO conda env
 if ! conda env list | awk '{print $1}' | grep -qx "devo"; then
@@ -124,6 +137,8 @@ fi
 
 pip install -U pip
 pip install --no-build-isolation .
+pip install -U open3d
+pip install -U rosbags
 conda deactivate
 
 cd "/home/ros"
@@ -148,4 +163,4 @@ vncserver -kill :1 >/dev/null 2>&1 || true
 vncserver :1 -geometry "${VNC_GEOMETRY:-1440x900}" -depth "${VNC_DEPTH:-24}" -localhost no
 websockify --web=/usr/share/novnc/ "${NOVNC_PORT:-6080}" localhost:"${VNC_PORT:-5901}" &
 
-tail -f /dev/null
+exec "${SHELL:-/usr/bin/zsh}" -l
