@@ -163,4 +163,4 @@ vncserver -kill :1 >/dev/null 2>&1 || true
 vncserver :1 -geometry "${VNC_GEOMETRY:-1440x900}" -depth "${VNC_DEPTH:-24}" -localhost no
 websockify --web=/usr/share/novnc/ "${NOVNC_PORT:-6080}" localhost:"${VNC_PORT:-5901}" &
 
-exec "${SHELL:-/usr/bin/zsh}" -l
+exec /usr/bin/zsh -l

@@ -119,7 +119,7 @@ RUN curl -fsSL -o /tmp/miniconda.sh https://repo.anaconda.com/miniconda/Minicond
  && bash /tmp/miniconda.sh -b -p $CONDA_DIR \
  && rm -f /tmp/miniconda.sh \
  && $CONDA_DIR/bin/conda config --system --set auto_activate_base false \
- && $CONDA_DIR/bin/conda clean -afy \ 
+ && $CONDA_DIR/bin/conda clean -afy \
  && chown -R ros:ros $CONDA_DIR
 
 # Make conda available in interactive shells (bash + zsh, for new users)
@@ -141,6 +141,16 @@ RUN RUNZSH=no CHSH=no KEEP_ZSHRC=yes \
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
  && sed -i 's/^ZSH_THEME=.*/ZSH_THEME="robbyrussell"/' /home/ros/.zshrc \
  && printf '\n# Convenience aliases\nalias ll="ls -alF"\n' >> /home/ros/.zshrc
+
+# Ensure Oh My Zsh is sourced (the installer didn't add it because KEEP_ZSHRC=yes)
+RUN grep -q 'oh-my-zsh.sh' /home/ros/.zshrc || cat >> /home/ros/.zshrc <<'EOF'
+
+# ---- Oh My Zsh ----
+export ZSH="$HOME/.oh-my-zsh"
+ZSH_THEME="robbyrussell"
+plugins=(git docker)
+source "$ZSH/oh-my-zsh.sh"
+EOF
 
 RUN sed -i 's/^plugins=(git)/plugins=(git docker)/' /home/ros/.zshrc
 USER root
