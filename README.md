@@ -53,7 +53,7 @@ From the repository root, use the wrapper scripts to start and stop the containe
 
 ```bash
 ./start_container.sh    # build (if needed) and start the container
-# wait for initialization (~20minutes)
+                        # wait for initialization (~20minutes) if you run the script for the first time
 ./stop_container.sh     # stop and remove the container
 ./cleanup.sh            # optional: cleans images/containers/workspace (inspect before running)
 ```
@@ -103,7 +103,38 @@ Once inside, you will find:
     *   Deactivate it using `conda deactivate`.
 *   **GPU Check:** You can run `gpu-check` in the terminal to verify that GPU acceleration is active.
 
-### Stopping the Container
+### Login and Run the DEVO Pipeline
+
+Use these commands from your host:
+
+```bash
+# 1) Log in to the running container
+docker exec -it DEVO_PC_pipline zsh
+
+# 2) Go to the DEVO project and activate its conda env
+cd /home/ros/workspace/shared/DEVO-point-cloud
+conda activate devo
+
+# 3) Run the pipeline
+python scripts/start_pipline.py --indir /home/ros/workspace/shared/DEVO-point-cloud/datasets/<dataset_name>
+```
+
+Outputs are written under:
+
+```bash
+/home/ros/workspace/shared/DEVO-point-cloud/results/<dataset_name>/
+```
+
+Optional EMVS run:
+
+```bash
+python scripts/start_pipline.py \
+  --indir /home/ros/workspace/shared/DEVO-point-cloud/datasets/<dataset_name> \
+  --export-emvs-mono \
+  --run-emvs
+```
+
+### Stopping the Container manually
 
 To stop the running container:
 
@@ -144,5 +175,4 @@ This will stop and remove the container, but it will preserve the `workspace` di
 ## Contact
 
 For questions, issues, or contributions, please open an issue on the GitHub repository or contact the developers.
-
 

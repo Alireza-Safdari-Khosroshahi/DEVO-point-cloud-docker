@@ -70,9 +70,11 @@ else
     BUILD_FLAGS=""
     echo "Build mode: with Docker cache."
   fi
-  echo "Check logs if needed:"
-  echo "  docker compose -f \"$COMPOSE_FILE\" logs -f $SERVICE_NAME"
-  echo "  docker logs -f $CONTAINER_NAME"
+  GREEN="\033[0;32m"
+  RESET="\033[0m"
+  echo -e "${GREEN}Check logs if needed:${RESET}"
+  echo -e "${GREEN}  docker compose -f \"$COMPOSE_FILE\" logs -f $SERVICE_NAME${RESET}"
+  echo -e "${GREEN}  docker logs -f $CONTAINER_NAME${RESET}"
   wait_for_user_to_read_hints
   (cd "$COMPOSE_DIR" && env UID="$HOST_UID" GID="$HOST_GID" docker compose build $BUILD_FLAGS && docker compose up -d)
 fi

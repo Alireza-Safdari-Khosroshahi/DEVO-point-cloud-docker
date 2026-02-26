@@ -110,6 +110,7 @@ if [[ "$DO_WORKSPACE_CLEAN" == true ]]; then
   if [[ -d "$WORKSPACE_DIR" ]]; then
     echo "[cleanup] Removing workspace contents..."
     rm -rf "${WORKSPACE_DIR:?}/"*
+    rm -f "${WORKSPACE_DIR:?}/.devo_first_init_done"
   else
     echo "[cleanup] Workspace directory not found: $WORKSPACE_DIR"
   fi
