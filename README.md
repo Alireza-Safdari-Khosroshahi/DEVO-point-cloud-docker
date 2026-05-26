@@ -1,5 +1,18 @@
-# DEVO-point-cloud-docker
-![Screenshot](assets/image.png)
+<h1 align="center">DEVO-point-cloud-docker</h1>
+<p align="center">
+<strong>Extending Deep Event Visual Odometry with Sparse Point Cloud Export</strong>
+</p>
+<p>
+  <img width="90%" src="assets/image.png">
+</p>  
+<p align="center">
+<a href="http://arxiv.org/abs/2605.22890"><strong>Our Paper arXiv</strong></a> |
+<a href="https://github.com/FiveTe/DEVO-point-cloud"><strong>Code</strong></a> |
+<a href="https://github.com/Alireza-Safdari-Khosroshahi/DEVO-point-cloud-docker"><strong>Docker Setup</strong></a> |
+</p>
+<p align="center">
+  <strong>Authors:</strong> Alireza Safdari, Sajad Ashraf
+</p>
 
 This repository provides a Dockerized environment for working with the DEVO-point-cloud and rpg_emvs projects, primarily focusing on ROS 1 Noetic with GPU acceleration. It sets up a complete desktop environment (XFCE) accessible via VNC and a web browser (noVNC), along with all necessary dependencies and tools.
 
