@@ -7,8 +7,7 @@
 </p>  
 <p align="center">
 <a href="http://arxiv.org/abs/2605.22890"><strong>Our Paper arXiv</strong></a> |
-<a href="https://github.com/FiveTe/DEVO-point-cloud"><strong>Code</strong></a> |
-<a href="https://github.com/Alireza-Safdari-Khosroshahi/DEVO-point-cloud-docker"><strong>Docker Setup</strong></a> |
+<a href="https://github.com/FiveTe/DEVO-point-cloud"><strong>Code</strong></a> 
 </p>
 <p align="center">
   <strong>Authors:</strong> Alireza Safdari, Sajad Ashraf
